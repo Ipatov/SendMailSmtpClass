@@ -162,15 +162,16 @@ class SendMailSmtpClass {
     
 	// парсинг ответа сервера
     private function _parseServer($socket, $response) {
-        while (@substr($responseServer, 3, 1) != ' ') {
-            if (!($responseServer = fgets($socket, 256))) {
-                return false;
-            }
-        }
-        if (!(substr($responseServer, 0, 3) == $response)) {
-            return false;
-        }
-        return true;        
+    	$responseServer = $response;
+    	while (@substr($responseServer, 3, 1) != ' ') {
+    		if (!($responseServer= fgets($socket, 256))) {
+    			return false;
+    		}
+    	}
+    	if (!(substr($responseServer, 0, 3) == $response)) {
+    		return false;
+    	}
+    	return true;    
     }
 	
 	// подготовка содержимого письма
