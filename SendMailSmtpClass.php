@@ -24,9 +24,14 @@ class SendMailSmtpClass {
     * @var string $smtp_username - логин
     * @var string $smtp_password - пароль
     * @var string $smtp_host - хост
-    * @var string $smtp_from - от кого
+    * @var array $smtp_from - от кого
     * @var integer $smtp_port - порт
     * @var string $smtp_charset - кодировка
+    * @var string $boundary - разделитель содержимого письма(для отправки файлов)
+    * @var bool $addFile - содержит письмо файл или нет
+    * @var string $multipart - заголовки для письма с файлами
+    * @var array $arrayCC - массив получателей копии письма
+    * @var array $arrayBCC - массив получателей скрытой копии письма
     *
     */   
     public $smtp_username;
@@ -38,6 +43,8 @@ class SendMailSmtpClass {
 	public $boundary;
     public $addFile = false;
     public $multipart;
+    public $arrayCC;
+    public $arrayBCC;
     
     public function __construct($smtp_username, $smtp_password, $smtp_host, $smtp_port = 25, $smtp_charset = "utf-8") {
         $this->smtp_username = $smtp_username;
@@ -57,12 +64,12 @@ class SendMailSmtpClass {
     * @param string $mailTo - получатель письма
     * @param string $subject - тема письма
     * @param string $message - тело письма
-    * @param string $smtp_from - отправитель. Массив с именем и e-mail
+    * @param array $smtp_from - отправитель. Массив с именем и e-mail
     *
     * @return bool|string В случаи отправки вернет true, иначе текст ошибки    
 	*
     */
-    function send($mailTo, $subject, $message, $smtp_from) {		
+    function send($mailTo, $subject, $message, $smtp_from) {
 		// подготовка содержимого письма к отправке
 		$contentMail = $this->getContentMail($subject, $message, $smtp_from, $mailTo);		
         
@@ -117,6 +124,26 @@ class SendMailSmtpClass {
 					fclose($socket);
 					throw new Exception('Error of command sending: RCPT TO');
 				}
+			}			
+			// если есть кому отправить копию
+			if(!empty($this->arrayCC)){
+				foreach($this->arrayCC as $emailCC) {
+					fputs($socket, "RCPT TO: <{$emailCC}>\r\n");
+					if (!$this->_parseServer($socket, "250")) {
+						fclose($socket);
+						throw new Exception('Error of command sending: RCPT TO');
+					}
+				}
+			}
+			// если есть кому отправить скрытую копию
+			if(!empty($this->arrayBCC)){
+				foreach($this->arrayBCC as $emailBCC) {
+					fputs($socket, "RCPT TO: <{$emailBCC}>\r\n");
+					if (!$this->_parseServer($socket, "250")) {
+						fclose($socket);
+						throw new Exception('Error of command sending: RCPT TO');
+					}
+				}
 			}
 			
             fputs($socket, "DATA\r\n");     
@@ -162,6 +189,7 @@ class SendMailSmtpClass {
     
 	// парсинг ответа сервера
     private function _parseServer($socket, $response) {
+		$responseServer = $response;
         while (@substr($responseServer, 3, 1) != ' ') {
             if (!($responseServer = fgets($socket, 256))) {
                 return false;
@@ -193,6 +221,21 @@ class SendMailSmtpClass {
 		}
 		$headers .= "From: {$smtp_from[0]} <{$smtp_from[1]}>\r\n"; // от кого письмо
 		$headers.= "To: ".$mailTo."\r\n"; // кому
+		
+		// если есть кому отправить копию
+		if(!empty($this->arrayCC)){
+			foreach($this->arrayCC as $emailCC) {
+				$headers.= "Cc: ".$emailCC."\r\n"; // кому копию
+			}
+		}
+		
+		// если есть кому отправить копию
+		if(!empty($this->arrayBCC)){
+			foreach($this->arrayBCC as $emailBCC) {
+				$headers.= "Bcc: ".$emailBCC."\r\n"; // кому копию
+			}
+		}		
+		
         $contentMail .= $headers . "\r\n";
 		
 		if($this->addFile){
@@ -218,6 +261,16 @@ class SendMailSmtpClass {
 		}
 		
 		return $contentMail;
+	}
+	
+	// добавлении получателя копии
+	public function toCopy($email){
+		$this->arrayCC[] = $email;
+	}
+	
+	// добавлении получателя скрытой копии
+	public function toHideCopy($email){
+		$this->arrayBCC[] = $email;
 	}
 	
 }
