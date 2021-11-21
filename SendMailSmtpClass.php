@@ -13,9 +13,12 @@
 * - Возможность отправки нескольким получателям
 * - Автоматическое формирование заголовков письма
 * - Возможность вложения файлов в письмо
+*
+* v 1.2
+* Исправлена отправка через Yandex
 * 
 * @author Ipatov Evgeniy <admin@vk-book.ru>
-* @version 1.1
+* @version 1.2
 */
 class SendMailSmtpClass {
 
@@ -110,7 +113,7 @@ class SendMailSmtpClass {
                 throw new Exception('Autorization error');
             }
 			
-            fputs($socket, "MAIL FROM: <".$this->smtp_username.">\r\n");
+            fputs($socket, "MAIL FROM: <".$smtp_from[1].">\r\n");
             if (!$this->_parseServer($socket, "250")) {
                 fclose($socket);
                 throw new Exception('Error of command sending: MAIL FROM');
@@ -219,8 +222,9 @@ class SendMailSmtpClass {
 		}else{
 			$headers .= "Content-type: text/html; charset={$this->smtp_charset}\r\n"; 			
 		}
-		$headers .= "From: {$smtp_from[0]} <{$smtp_from[1]}>\r\n"; // от кого письмо
-		$headers.= "To: ".$mailTo."\r\n"; // кому
+		// $headers .= "From: {$smtp_from[0]} <{$smtp_from[1]}>\r\n"; // от кого письмо
+		$headers .= 'From: ' . '=?UTF-8?B?' . base64_encode($smtp_from[0]) . '?= ' . '<' . $smtp_from[1] . '>' . "\n";
+		$headers .= "To: ".$mailTo."\r\n"; // кому
 		
 		// если есть кому отправить копию
 		if(!empty($this->arrayCC)){
