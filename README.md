@@ -1,3 +1,6 @@
+Для установки с помощью composer:
+composer require ipatov/smtp-mail
+
 /**
 * 13.03.2018
 *
@@ -25,6 +28,9 @@ UPD 23.12.2019
 3. комменты к переменным внутри класса дописал
 4. исправлен баг в методе _parseServer
 
+UPD 21.11.2021
+1. Исправлена отправка через yandex
+2. Добавлена установка через composer: composer require ipatov/smtp-mail
 
 Подробнее тут: 
 https://vk-book.ru/novaya-versiya-klassa-sendmailsmtpclass-otpravka-fajlov-cherez-smtp-s-avtorizaciej-po-protokolu-ssl-na-php/
