@@ -13,12 +13,10 @@
             "role": "Developer"
         }
     ],
-    "require": {
-        "php": ">=5.5.0"
-    },
     "autoload": {
-        "psr-0": {
-            "SendMailSmtpClass": "src"
+        "psr-4": {
+            "SmtpMail\\": "src/"
         }
-    }
+    },
+    "require": {}
 }

@@ -20,6 +20,9 @@
 * @author Ipatov Evgeniy <admin@vk-book.ru>
 * @version 1.2
 */
+
+namespace SmtpMail;
+
 class SendMailSmtpClass {
 
     /**
