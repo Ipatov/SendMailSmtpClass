@@ -1,0 +1,24 @@
+{
+    "name": "Ipatov/SendMailSmtpClass",
+    "type": "library",
+    "description": "PHP Class to Send Email using Yandex, Gmail, Mail.ru SMTP",
+    "keywords": ["smtp","mail"],
+    "homepage": "https://github.com/Ipatov/SendMailSmtpClass",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ipatov Evgeny",
+            "email": "admin@vk-book.ru",
+            "homepage": "https://vk-book.ru",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6"
+    },
+    "autoload": {
+        "psr-0": {
+            "SendMailSmtpClass": "src"
+        }
+    }
+}
