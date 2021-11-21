@@ -1,5 +1,5 @@
 {
-    "name": "Ipatov/SendMailSmtpClass",
+    "name": "ipatov/smtp-mail",
     "type": "library",
     "description": "PHP Class to Send Email using Yandex, Gmail, Mail.ru SMTP",
     "keywords": ["smtp","mail"],
